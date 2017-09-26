@@ -44,7 +44,7 @@ server {
 {% endfor %}
 {% endif %}
 
-{% if 'gunicorn' == root_pathinfo.get('type', '') or 'proxy' == root_pathinfo.get('type', '') %}
+{% if root_pathinfo.get('type', '') in ['gunicorn', 'proxy'] %}
     # Redirect request to HTTP proxy via UNIX socket, if no file matches.
     location @http_proxy {
         proxy_pass http://unix:{{ socket }};
@@ -54,7 +54,7 @@ server {
     }
 {% endif %}
 
-{% if 'php' == root_pathinfo.get('type', '') or 'php_redirect_to_index' == root_pathinfo.get('type', '') %}
+{% if root_pathinfo.get('type', '') in ['php', 'php_redirect_to_index', 'wordpress_multisite'] %}
     # Redirect URL ending with .php to PHP-FPM.
     index index.html index.php;
     location ~* \.php$ {
@@ -72,9 +72,9 @@ server {
 {% endif %}
 
     location / {
-{% if 'gunicorn' == root_pathinfo.get('type', '') or 'proxy' == root_pathinfo.get('type', '') %}
+{% if root_pathinfo.get('type', '') in ['gunicorn', 'proxy', 'wordpress_multisite'] %}
         try_files $uri @http_proxy;
-{% elif 'php_redirect_to_index' == root_pathinfo.get('type', '') %}
+{% elif root_pathinfo.get('type', '') in ['php_redirect_to_index'] %}
         # Redirect each request to index.php if no file matches.
         try_files $uri $uri/ /index.php?$args;
 {% endif %}
