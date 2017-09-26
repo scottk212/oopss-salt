@@ -2,6 +2,15 @@
 
 {% from "oopss/http/map.jinja" import http_config with context %}
 
+{% if root_pathinfo.get('type', '') in ['wordpress_multisite'] %}
+map $uri $blogname{
+    ~^(?P<blogpath>/[^/]+/)files/(.*)       $blogpath ;
+}
+map $blogname $blogid{
+    default -999;
+}
+{% endif %}
+
 server {
     server_name{% for server_name in root_pathinfo['server_names'] %} {{ server_name }}{% endfor %};
     root {{ http_config['rootdir'] }}/{{ user }}/{{ root_path }};
@@ -58,6 +67,9 @@ server {
     # Redirect URL ending with .php to PHP-FPM.
     index index.html index.php;
     location ~* \.php$ {
+{% if root_pathinfo.get('type', '') in ['wordpress_multisite'] %}
+        try_files $uri =404;
+{% endif %}
         fastcgi_pass unix:{{ socket }};
         include fastcgi_params;
     }
@@ -71,9 +83,24 @@ server {
     }
 {% endif %}
 
+{% if root_pathinfo.get('type', '') in ['wordpress_multisite'] %}
+    location ~ ^(/[^/]+/)?files/(.+) {
+        try_files /wp-content/blogs.dir/$blogid/files/$2 /wp-includes/ms-files.php?file=$2 ;
+        access_log off;     log_not_found off; expires max;
+    }
+
+    if (!-e $request_filename) {
+        rewrite /wp-admin$ $scheme://$host$uri/ permanent;
+        rewrite ^(/[^/]+)?(/wp-.*) $2 last;
+        rewrite ^(/[^/]+)?(/.*\.php) $2 last;
+    }
+{% endif %}
+
     location / {
-{% if root_pathinfo.get('type', '') in ['gunicorn', 'proxy', 'wordpress_multisite'] %}
+{% if root_pathinfo.get('type', '') in ['gunicorn', 'proxy'] %}
         try_files $uri @http_proxy;
+{% elif root_pathinfo.get('type', '') in ['wordpress_multisite'] %}
+        try_files $uri $uri/ /index.php?$args ;
 {% elif root_pathinfo.get('type', '') in ['php_redirect_to_index'] %}
         # Redirect each request to index.php if no file matches.
         try_files $uri $uri/ /index.php?$args;
