@@ -35,6 +35,8 @@ oopss_mysql_server_config_base:
         - user: root
         - group: adm
         - mode: 440
+        - watch_in:
+            - service: oopss_mysql_server_service
 
 oopss_mysql_server_rootconfig:
     file:
