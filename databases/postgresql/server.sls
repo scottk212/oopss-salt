@@ -34,6 +34,7 @@ postgresql:
             - pkg: postgresql-{{ postgresql.version }}
         - context:
             mon_user: {{ salt['pillar.get']('databases:postgresql:mon_user', False) }}
+            listen_on: {{ salt['pillar.get']('databases:postgresql:listen_on', '127.0.0.1/32') }}
 
 
 ##############################################################################
