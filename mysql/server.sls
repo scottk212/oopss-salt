@@ -26,6 +26,16 @@ oopss_mysql_server_service:
         - require:
             - pkg: oopss_mysql_server_pkg
 
+oopss_mysql_server_socket_perm:
+    file:
+        - name: /var/run/mysqld/
+        - directory
+        - user: root
+        - group: root
+        - mode: 750
+        - require:
+            - pkg: oopss_mysql_server_pkg
+
 oopss_mysql_server_config_base:
     file:
         - managed
