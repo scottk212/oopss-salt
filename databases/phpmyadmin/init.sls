@@ -38,6 +38,7 @@ phpmyadmin:
         - group: root
         - mode: 444
         - source: salt://oopss/databases/phpmyadmin/config.inc.php
+        - template: jinja
         - require:
             - pkg: pkg_phpmyadmin
 

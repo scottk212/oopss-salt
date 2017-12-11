@@ -16,3 +16,5 @@ $cfg['SaveDir'] = '';
  */
 $cfg['PmaNoRelation_DisableWarning'] = true;
 
+$cfg['Servers'][1]['host'] = '{{ salt['pillar.get']('databases:phpmyadmin:db_server', '127.0.0.1') }}';
+
