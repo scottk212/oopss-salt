@@ -30,9 +30,9 @@ oopss_mysql_server_socket_perm:
     file:
         - name: /var/run/mysqld/
         - directory
-        - user: root
-        - group: root
-        - mode: 750
+        - user: mysql
+        - group: mysql
+        - mode: 700
         - require:
             - pkg: oopss_mysql_server_pkg
 
