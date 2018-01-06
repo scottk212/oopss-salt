@@ -67,15 +67,25 @@ server {
     # Redirect URL ending with .php to PHP-FPM.
     index index.html index.php;
     location ~* \.php$ {
+{% if grains['os'] == 'Debian' and grains['osrelease_info'][0] < 8 %}
 {% if root_pathinfo.get('type', '') in ['wordpress_multisite'] %}
         try_files $uri =404;
 {% endif %}
+{% endif %}
         fastcgi_pass unix:{{ socket }};
+        {% if grains['os'] == 'Debian' and grains['osrelease_info'][0] < 8 %}
         include fastcgi_params;
+        {% else %}
+        include snippets/fastcgi-php.conf;
+        {% endif %}
     }
     location = "/fpm-status" {
         fastcgi_pass unix:{{ socket }};
+        {% if grains['os'] == 'Debian' and grains['osrelease_info'][0] < 8 %}
         include fastcgi_params;
+        {% else %}
+        include snippets/fastcgi-php.conf;
+        {% endif %}
         {%- for ipaddr in grains['ipv4'] %}
         allow {{ ipaddr }};
         {%- endfor %}
