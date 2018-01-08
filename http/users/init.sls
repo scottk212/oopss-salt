@@ -191,7 +191,11 @@ include:
         - user: root
         - group: adm
         - mode: 440
+        {% if root_pathinfo.get('proxy_to', False) %}
+        - source: salt://oopss/http/users/files/vhost_proxy
+        {% else %}
         - source: salt://oopss/http/users/files/vhost
+        {% endif %}
         - template: jinja
         - context:
             user: {{ user }}
