@@ -183,10 +183,11 @@ include:
         {%- endif %}
 
 # If using Nginx
+{% set file_is_active = rootpath_is_active or root_pathinfo.get('proxy_to', False) %}
 {% if salt['pillar.get']('http:web_server', False) == 'oopss.nginx' %}
 /etc/nginx/sites-available/{{ user }}-{{ root_path }}:
     file:
-        {%- if user_is_active and rootpath_is_active %}
+        {%- if user_is_active and file_is_active %}
         - managed
         - user: root
         - group: adm
@@ -217,7 +218,7 @@ include:
 
 /etc/nginx/sites-enabled/{{ user }}-{{ root_path }}:
     file:
-        {%- if user_is_active and rootpath_is_active %}
+        {%- if user_is_active and file_is_active %}
         - symlink
         - target: /etc/nginx/sites-available/{{ user }}-{{ root_path }}
         - force: True
