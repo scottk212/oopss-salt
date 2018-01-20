@@ -84,7 +84,7 @@ oopss_mysql_users_{{ user }}:
     mysql_user:
         - present
         - name: {{ user }}
-        - host: localhost
+        - host: '%'
         {%- if prop.get('active', true) %}
         - password_hash: '{{ prop.password }}'
         {%- else %}
@@ -110,7 +110,7 @@ oopss_mysql_users_grant_{{ user }}:
         - grant: all privileges
         - database : {{ user }}.*
         - user : {{ user }}
-        - host: localhost
+        - host: '%'
         - require:
             - mysql_database: oopss_mysql_users_db_{{ user }}
 {% endfor %}
