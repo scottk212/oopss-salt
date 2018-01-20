@@ -43,7 +43,7 @@ php5-fpm:
 {% set user_is_active = userinfo.get('is_active', True) %}
 
 {% for root_path, root_pathinfo in userinfo.get('root_paths', {}).iteritems() %}
-{% if 'php' == root_pathinfo.get('type', '') or 'php_redirect_to_index' == root_pathinfo.get('type', '') %}
+{% if root_pathinfo.get('type', False) in ['php', 'php_redirect_to_index', 'wordpress_multisite'] %}
 /etc/php5/fpm/pool.d/{{ user }}-{{ root_path }}.conf:
     file:
         {%- if user_is_active and root_pathinfo.get('is_active', True) %}
