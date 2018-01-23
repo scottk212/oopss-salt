@@ -1,7 +1,7 @@
 # Managed by Salt
 
 server {
-    server_name{% for server_name in root_pathinfo['server_names'] %} {{ server_name }}{% endfor %};
+    server_name{% for server_name in root_pathinfo['server_names'] %} {{ server_name }}{% endfor %}{% for server_name in root_pathinfo.get('redirect_from',[]) %} {{ server_name }}{% endfor %};
     location / {
             proxy_set_header Host $http_host;
             proxy_pass http://{{ root_pathinfo['proxy_to'] }};
