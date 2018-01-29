@@ -21,7 +21,6 @@ oopss_postfix_service:
         - reload: True
         - require:
             - pkg: oopss_postfix_pkg
-            - file: /etc/postfix/header_checks
             - file: /etc/postfix/sasl_password
         - watch:
             - file: /etc/postfix/main.cf
@@ -81,11 +80,4 @@ postmap-sasl_password:
         - name: "postmap /etc/postfix/sasl_password"
         - onchanges:
             - file: /etc/postfix/sasl_password
-
-/etc/postfix/header_checks:
-    file.managed:
-        - mode: 640
-        - replace: False
-        - user: root
-        - group: adm
 

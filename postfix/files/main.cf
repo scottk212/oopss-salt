@@ -52,9 +52,6 @@ smtp_sasl_password_maps = hash:$config_directory/sasl_password
 smtp_bind_address = {{ salt['pillar.get']('oopss:postfix:smtp_bind_address') }}
 {% endif %}
 
-# Content inspection
-header_checks = pcre:$config_directory/header_checks
-
 {% for key, value in salt['pillar.get']('mail:postfix:extra_config', {}).iteritems() %}
 {{ key }} = {{ value }}
 {% endfor %}
